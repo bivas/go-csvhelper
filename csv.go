@@ -71,14 +71,14 @@ func UnmarshalFieldsByIndex(reader *csv.Reader, v interface{}, indices ...int) e
 		return err
 	}
 	s := reflect.ValueOf(v).Elem()
-	if s.NumField() != len(record) {
-		return &FieldMismatch{s.NumField(), len(record)}
+	if s.NumField() != len(indices) {
+		return &FieldMismatch{s.NumField(), len(indices)}
 	}
 	if len(indices) > len(record) {
-		return nil
+		return &FieldMismatch{len(indices), len(record)}
 	}
-	for _, i := range indices {
-		f := s.Field(i)
+	for si, i := range indices {
+		f := s.Field(si)
 		switch f.Kind() {
 		case reflect.String:
 			f.SetString(record[i])
